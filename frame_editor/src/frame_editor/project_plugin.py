@@ -227,6 +227,10 @@ class ProjectPlugin(Plugin):
 
         ## Ask for permission to close
         if self.widget.isWindowModified():
+            if self.editor.get_file_name() != "":
+                autosave_path = self.editor.get_full_file_path()+".autosave"
+                self.save_file(autosave_path)
+                autosaved = True
             reply = QtWidgets.QMessageBox.warning(self.widget, "frame editor",
                 "The file has been modified.\nDo you want to save your changes before exiting (Save As...)?",
                 QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Default,
@@ -234,6 +238,8 @@ class ProjectPlugin(Plugin):
 
             if reply == QtWidgets.QMessageBox.Yes:
                 self.save_as()
+            if autosaved:
+                os.remove(autosave_path)
         # unregister interfaces
 
 
